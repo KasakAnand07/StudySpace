@@ -1,0 +1,15 @@
+.mtp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.mtp-card {
+  border-radius: 12px;
+  background: #fff;
+  transition: transform 0.2s;
+}
+
+.mtp-card:hover {
+  transform: translateY(-5px);
+}
