@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_API_URL || "https://studyspace-jamd.onrender.com";
-
-const API_URL = `${baseURL}/subjects`;
+const API_URL = `${process.env.REACT_APP_API_URL}/subjects`;
 
 export const getSubjects = async () => {
   const { data } = await axios.get(API_URL);

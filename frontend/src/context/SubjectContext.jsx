@@ -11,7 +11,7 @@ export const SubjectProvider = ({ children }) => {
   const fetchSubjects = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get("http://localhost:5000/api/subjects");
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/subjects`);
       setSubjects(data);
     } catch (err) {
       console.error("Error fetching subjects:", err);
@@ -23,7 +23,7 @@ export const SubjectProvider = ({ children }) => {
   // ✅ Delete subject (instant UI update)
   const deleteSubject = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/subjects/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/subjects/${id}`);
       setSubjects((prev) => prev.filter((s) => s._id !== id)); // instant update
     } catch (err) {
       console.error("Error deleting subject:", err);
