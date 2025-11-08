@@ -93,10 +93,6 @@ export default function Sidebar() {
               </div>
             </Collapse>
           </div>
-
-          {/* <Nav.Link href="/progress" className="nav-link sidebar-item mt-2">
-            📈 Progress
-          </Nav.Link> */}
         </Nav>
       </div>
 
