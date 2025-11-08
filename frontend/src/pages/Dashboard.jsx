@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [remarks, setRemarks] = useState({});
   const debounceTimers = useRef({}); // store debounce timers per subject
   const navigate = useNavigate();
+  const timersRef = debounceTimers.current;
 
   const handleOpenResources = (subjectId) => {
     navigate(`/study-material/${subjectId}`);
@@ -72,7 +73,7 @@ export default function Dashboard() {
   // 🧹 Clear timers on unmount
   useEffect(() => {
     return () => {
-      Object.values(debounceTimers.current).forEach(clearTimeout);
+      clearTimeout(timersRef);
     };
   }, []);
 

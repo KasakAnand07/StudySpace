@@ -27,7 +27,6 @@ import {
 import { motion } from "framer-motion";
 import Lottie from "lottie-react";
 import trophyAnimation from "../assets/trophy.json";
-import fireAnimation from "../assets/fire.json";
 import LayoutWrapper from "../components/LayoutWrapper";
 
 export default function Progress() {
