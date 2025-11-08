@@ -13,7 +13,6 @@ It helps learners manage subjects, practice flashcards, and organize their study
 - 🎯 **Interactive Dashboard** — Engaging dashboard that updates dynamically.  
 - 💾 **MongoDB Integration** — Data is securely stored and fetched from MongoDB.  
 - ⚙️ **Clean & Modern UI** — Built using React-Bootstrap and Lottie animations.  
-- 📱 **Fully Responsive** — Optimized for both desktop and mobile devices.  
 - 🔒 **RESTful API** — Express.js backend with structured routes and Mongoose models.
 
 ---
