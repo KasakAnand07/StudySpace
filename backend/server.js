@@ -17,8 +17,19 @@ connectDB();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://studyace.netlify.app"
+  // "http://localhost:5173", // for local testing
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
+
+
 // Middlewares
-app.use(cors({origin: "*"}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/subjects", subjectRoutes);
@@ -31,6 +42,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
+app.use("/api/upload", uploadRoutes);
+
 // Test Route
 app.get("/", (req, res) => {
   res.send("📚 StudySpace API is running successfully...");
@@ -40,4 +53,3 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
-app.use("/api/upload", uploadRoutes);
