@@ -11,7 +11,6 @@ import MTP from "./pages/MTP";
 import RTP from "./pages/RTP";
 import QA from "./pages/QA";
 import Flashcards from "./pages/Flashcards";
-import Progress from "./pages/Progress";
 import { SubjectProvider } from "./context/SubjectContext"; // ✅ Import Context Provider
 import "./styles/layout.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -41,7 +40,6 @@ function App() {
                 <Route path="/rtp" element={<RTP />} />
                 <Route path="/qa" element={<QA />} />
                 <Route path="/flashcards" element={<Flashcards />} />
-                <Route path="/progress" element={<Progress />} />
 
                 {/* Subject-based routes */}
                 <Route path="/pyq/:subjectId" element={<PYQ />} />

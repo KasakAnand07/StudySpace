@@ -51,13 +51,10 @@ export default function Dashboard() {
 
   // 📝 Debounced remarks handler
   const handleRemarksChange = (id, newRemarks) => {
-    // update UI instantly
     setRemarks((prev) => ({ ...prev, [id]: newRemarks }));
 
-    // clear previous timer if exists
     if (debounceTimers.current[id]) clearTimeout(debounceTimers.current[id]);
 
-    // set new debounce timer
     debounceTimers.current[id] = setTimeout(async () => {
       try {
         await axios.put(`http://localhost:5000/api/subjects/${id}`, {
@@ -67,13 +64,14 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Error saving remarks:", error);
       }
-    }, 1500); // wait 1.5 seconds after user stops typing
+    }, 1500);
   };
 
-  // 🧹 Clear timers on unmount
   useEffect(() => {
+    const timersRef = { ...debounceTimers.current };
+
     return () => {
-      clearTimeout(timersRef);
+      Object.values(timersRef).forEach((t) => clearTimeout(t));
     };
   }, []);
 
