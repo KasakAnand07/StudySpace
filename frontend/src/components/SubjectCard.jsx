@@ -6,14 +6,18 @@ import { toast } from "react-toastify";
 export default function SubjectCard({ subject, onDelete, onUpdate }) {
   const [showEdit, setShowEdit] = useState(false);
   const [editName, setEditName] = useState(subject.name);
-  const [editDescription, setEditDescription] = useState(subject.description || "");
+  const [editDescription, setEditDescription] = useState(
+    subject.description || ""
+  );
   const [loading, setLoading] = useState(false);
 
   // --- Delete Subject ---
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete "${subject.name}"?`)) {
       try {
-        await axios.delete(`http://localhost:5000/api/subjects/${subject._id}`);
+        await axios.delete(
+          `${process.env.REACT_APP_API_URL}/subjects/${subject._id}`
+        );
         toast.success("Subject deleted successfully!");
         onDelete(subject._id);
       } catch (error) {
@@ -34,7 +38,7 @@ export default function SubjectCard({ subject, onDelete, onUpdate }) {
     try {
       setLoading(true);
       const { data } = await axios.put(
-        `http://localhost:5000/api/subjects/${subject._id}`,
+        `${process.env.REACT_APP_API_URL}/subjects/${subject._id}`,
         { name: editName, description: editDescription }
       );
       onUpdate(data);

@@ -21,8 +21,8 @@ export default function SubjectStudyMaterial() {
       console.log("Fetching subject and materials for:", id);
 
       const [subRes, matRes] = await Promise.all([
-        axios.get(`http://localhost:5000/api/subjects/${id}`),
-        axios.get(`http://localhost:5000/api/materials/subject/${id}`),
+        axios.get(`${process.env.REACT_APP_API_URL}/subjects/${id}`),
+        axios.get(`${process.env.REACT_APP_API_URL}/materials/subject/${id}`),
       ]);
 
       setSubjectName(subRes.data.name);
@@ -53,14 +53,14 @@ export default function SubjectStudyMaterial() {
         const formData = new FormData();
         formData.append("file", file);
         const uploadRes = await axios.post(
-          "http://localhost:5000/api/upload",
+          `${process.env.REACT_APP_API_URL}/upload`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
         fileUrl = uploadRes.data.filePath;
       }
 
-      await axios.post("http://localhost:5000/api/materials", {
+      await axios.post(`${process.env.REACT_APP_API_URL}/materials`, {
         title,
         description,
         subjectId: id, // link to subject
@@ -86,7 +86,7 @@ export default function SubjectStudyMaterial() {
       return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/materials/${matId}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/materials/${matId}`);
       setMaterials(materials.filter((m) => m._id !== matId));
       toast.success("Material deleted successfully!");
     } catch (error) {
@@ -201,7 +201,10 @@ export default function SubjectStudyMaterial() {
 
                     {mat.fileUrl && (
                       <a
-                        href={`http://localhost:5000${mat.fileUrl}`}
+                        href={`${process.env.REACT_APP_API_URL.replace(
+                          "/api",
+                          ""
+                        )}${mat.fileUrl}`}
                         target="_blank"
                         rel="noreferrer"
                         className="btn btn-outline-primary btn-sm mt-auto"

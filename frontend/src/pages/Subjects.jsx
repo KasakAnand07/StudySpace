@@ -13,7 +13,7 @@ export default function Subjects() {
   // --- Fetch Subjects ---
   const fetchSubjects = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/api/subjects");
+      const { data } = await axios.get(`${process.env.REACT_APP_API_URL}/subjects`);
       setSubjects(data);
     } catch (error) {
       console.error("Error fetching subjects:", error);

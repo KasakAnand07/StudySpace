@@ -16,7 +16,7 @@ export default function Sidebar() {
 
     setAdding(true);
     try {
-      await axios.post("http://localhost:5000/api/subjects", {
+      await axios.post(`${process.env.REACT_APP_API_URL}/subjects`, {
         name: newSubject.trim(),
       });
 

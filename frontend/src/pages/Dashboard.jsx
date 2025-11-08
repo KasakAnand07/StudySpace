@@ -38,9 +38,10 @@ export default function Dashboard() {
     if (!newName || newName === subject.name) return;
 
     try {
-      await axios.put(`http://localhost:5000/api/subjects/${subject._id}`, {
-        name: newName,
-      });
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/subjects/${subject._id}`, {
+          name: newName,
+        });
       await fetchSubjects();
     } catch (error) {
       console.error("Error editing subject:", error);
@@ -56,7 +57,7 @@ export default function Dashboard() {
 
     debounceTimers.current[id] = setTimeout(async () => {
       try {
-        await axios.put(`http://localhost:5000/api/subjects/${id}`, {
+        await axios.put(`${process.env.REACT_APP_API_URL}/subjects/${id}`, {
           remarks: newRemarks,
         });
         await fetchSubjects();
