@@ -1,20 +1,20 @@
-.mtp-page {
+.rtp-page {
   color: white;
 }
 
-.mtp-grid {
+.rtp-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
-.mtp-card {
+.rtp-card {
   background: #ffffff;
   border-radius: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.mtp-card:hover {
+.rtp-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
