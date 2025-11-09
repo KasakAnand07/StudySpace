@@ -55,6 +55,7 @@ router.post("/", upload.single("file"), async (req, res) => {
       year,
       subject,
       fileUrl: `/uploads/${req.file.filename}`,
+      fileName: req.file.originalname, // <-- store original file name
     });
 
     await newItem.save();
@@ -64,7 +65,7 @@ router.post("/", upload.single("file"), async (req, res) => {
   }
 });
 
-// UPDATE PYQ (fields + optional PDF)
+// UPDATE PYQ
 router.put("/:id", upload.single("file"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -73,18 +74,18 @@ router.put("/:id", upload.single("file"), async (req, res) => {
 
     const { year, subject, attempt } = req.body;
 
-    // Update fields
     if (year) pyq.year = year;
     if (subject) pyq.subject = subject;
     if (attempt) pyq.title = `${subject || pyq.subject} ${year || pyq.year} ${attempt}`;
 
-    // If new PDF uploaded, delete old file and save new path
     if (req.file) {
+      // Delete old file
       if (pyq.fileUrl) {
         const oldFilePath = path.join(process.cwd(), pyq.fileUrl);
         if (fs.existsSync(oldFilePath)) fs.unlinkSync(oldFilePath);
       }
       pyq.fileUrl = `/uploads/${req.file.filename}`;
+      pyq.fileName = req.file.originalname; // <-- store new original name
     }
 
     await pyq.save();

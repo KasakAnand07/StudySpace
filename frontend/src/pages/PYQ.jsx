@@ -102,16 +102,19 @@ export default function PYQ() {
 
   // 🔍 Filtering (same logic)
   const filteredPYQs = pyqs.filter((pyq) => {
-    const matchesSearch =
-      pyq.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pyq.year.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pyq.attempt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (pyq.fileName &&
-        pyq.fileName.toLowerCase().includes(searchTerm.toLowerCase()));
+    const subject = pyq.subject || "";
+    const year = pyq.year || "";
+    const attempt = pyq.attempt || "";
+    const fileName = pyq.fileName || "";
 
-    const matchesYear = filterYear === "All" || pyq.year === filterYear;
-    const matchesSubject =
-      filterSubject === "All" || pyq.subject === filterSubject;
+    const matchesSearch =
+      subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      year.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      attempt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      fileName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesYear = filterYear === "All" || year === filterYear;
+    const matchesSubject = filterSubject === "All" || subject === filterSubject;
 
     return matchesSearch && matchesYear && matchesSubject;
   });

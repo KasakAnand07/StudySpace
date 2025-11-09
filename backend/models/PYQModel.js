@@ -5,7 +5,8 @@ const pyqSchema = new mongoose.Schema(
     title: { type: String, required: true },
     year: { type: String, required: true },
     subject: { type: String, required: true },
-    fileUrl: { type: String }, // PDF path
+    fileUrl: { type: String },       // PDF path
+    fileName: { type: String },      // Original uploaded file name
   },
   { timestamps: true }
 );
