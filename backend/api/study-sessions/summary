@@ -1,6 +1,0 @@
-{
-  totalTime: ..., 
-  timePerSubject: {...}, 
-  currentStreak: <number>, 
-  lastStudyDate: <date>
-}

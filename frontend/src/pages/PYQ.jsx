@@ -14,9 +14,10 @@ import Lottie from "lottie-react";
 import LayoutWrapper from "../components/LayoutWrapper";
 import emptyAnimation from "../assets/empty.json";
 import "../styles/pyq.css";
+import { usePYQ } from "../context/PYQContext";
 
 export default function PYQ() {
-  const [pyqs, setPyqs] = useState([]);
+  const { pyqs, createPYQ, removePYQ, editPYQ, loading, error } = usePYQ();
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterYear, setFilterYear] = useState("All");
@@ -33,77 +34,80 @@ export default function PYQ() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
-      const fileURL = URL.createObjectURL(file);
-      setFormData({ ...formData, file, fileName: file.name, fileURL });
+      setFormData({ ...formData, file, fileName: file.name });
     } else {
       alert("Please upload a valid PDF file!");
     }
   };
 
-  // ✅ Add new PYQ
-  const handleAddPYQ = () => {
+  // ✅ Add new PYQ (to backend)
+  const handleAddPYQ = async () => {
     if (
       !formData.year ||
       !formData.attempt ||
       !formData.subject ||
       !formData.file
-    ) {
+    )
       return alert("Please fill all fields and upload a PDF!");
-    }
 
-    setPyqs([
-      ...pyqs,
-      {
-        id: Date.now(),
-        year: formData.year.trim(),
-        attempt: formData.attempt.trim(),
-        subject: formData.subject.trim(),
-        fileName: formData.fileName,
-        fileURL: formData.fileURL,
-      },
-    ]);
+    const uploadData = new FormData();
+    uploadData.append("year", formData.year.trim());
+    uploadData.append("attempt", formData.attempt.trim());
+    uploadData.append("subject", formData.subject.trim());
+    uploadData.append("file", formData.file);
 
-    setFormData({
-      year: "",
-      attempt: "",
-      subject: "",
-      file: null,
-      fileName: "",
-      fileURL: "",
-    });
-    setShowModal(false);
-  };
-
-  // 🗑️ Delete PYQ
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this PYQ?")) {
-      setPyqs(pyqs.filter((p) => p.id !== id));
+    try {
+      await createPYQ(uploadData);
+      setFormData({
+        year: "",
+        attempt: "",
+        subject: "",
+        file: null,
+        fileName: "",
+      });
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error adding PYQ:", err);
+      alert("Failed to upload. Check server connection.");
     }
   };
 
-  // ✏️ Edit Year/Attempt/Subject
-  const handleEdit = (pyq) => {
+  // 🗑️ Delete PYQ (backend + local)
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this PYQ?")) return;
+    try {
+      await removePYQ(id);
+    } catch (err) {
+      console.error("Error deleting PYQ:", err);
+    }
+  };
+
+  // ✏️ Edit PYQ details
+  const handleEdit = async (pyq) => {
     const newSubject = prompt("Edit subject:", pyq.subject);
     const newYear = prompt("Edit year:", pyq.year);
     const newAttempt = prompt("Edit attempt:", pyq.attempt);
-    if (newSubject && newYear && newAttempt) {
-      setPyqs(
-        pyqs.map((p) =>
-          p.id === pyq.id
-            ? { ...p, subject: newSubject, year: newYear, attempt: newAttempt }
-            : p
-        )
-      );
+    if (!newSubject || !newYear || !newAttempt) return;
+
+    try {
+      await editPYQ(pyq._id, {
+        subject: newSubject,
+        year: newYear,
+        attempt: newAttempt,
+      });
+    } catch (err) {
+      console.error("Error updating PYQ:", err);
     }
   };
 
-  // 🔍 Search + Filter Logic
+  // 🔍 Filtering (same logic)
   const filteredPYQs = pyqs.filter((pyq) => {
     const matchesSearch =
       pyq.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pyq.year.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pyq.attempt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pyq.fileName.toLowerCase().includes(searchTerm.toLowerCase());
+      (pyq.fileName &&
+        pyq.fileName.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesYear = filterYear === "All" || pyq.year === filterYear;
     const matchesSubject =
@@ -112,12 +116,18 @@ export default function PYQ() {
     return matchesSearch && matchesYear && matchesSubject;
   });
 
-  // 🗓️ Unique filters
   const years = Array.from(new Set(pyqs.map((p) => p.year)));
   const subjects = Array.from(new Set(pyqs.map((p) => p.subject)));
 
+  // 🧩 Handle loading/error
+  if (loading) return <p className="text-center mt-5">Loading PYQs...</p>;
+  if (error) return <p className="text-danger text-center mt-5">{error}</p>;
+
   return (
-    <LayoutWrapper title="🎓 PYQ - Previous Year Questions" subtitle="Manage and review previous year question papers">
+    <LayoutWrapper
+      title="🎓 PYQ - Previous Year Questions"
+      subtitle="Manage and review previous year question papers"
+    >
       <div className="content-page pyq-page container py-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="fw-bold text-black">Previous Year Questions (PYQ)</h2>
@@ -185,7 +195,7 @@ export default function PYQ() {
             <AnimatePresence>
               {filteredPYQs.map((pyq) => (
                 <motion.div
-                  key={pyq.id}
+                  key={pyq._id}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
@@ -221,7 +231,7 @@ export default function PYQ() {
                           <Button
                             variant="outline-danger"
                             size="sm"
-                            onClick={() => handleDelete(pyq.id)}
+                            onClick={() => handleDelete(pyq._id)}
                           >
                             <Trash2 size={16} />
                           </Button>

@@ -9,6 +9,9 @@ import path from "path";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import flashcardRoutes from "./routes/flashcardRoutes.js";
 import studySessionRoutes from "./routes/studySessionRoutes.js";
+import pyqRoutes from "./routes/pyq.js";
+import mtpRoutes from "./routes/mtp.js";
+import rtpRoutes from "./routes/rtp.js";
 
 dotenv.config();
 
@@ -44,6 +47,9 @@ app.use("/api/subjects", subjectRoutes);
 app.use("/api/materials", studyMaterialRoutes);
 app.use("/api/flashcards", flashcardRoutes);
 app.use("/api/study-sessions", studySessionRoutes);
+app.use("/api/pyq", pyqRoutes);
+app.use("/api/mtp", mtpRoutes);
+app.use("/api/rtp", rtpRoutes);
 
 // File upload static path
 const __filename = fileURLToPath(import.meta.url);
