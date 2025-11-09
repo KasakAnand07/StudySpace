@@ -1,8 +1,37 @@
 import express from "express";
 import MTP from "../models/MTPModel.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
+// Ensure uploads folder exists
+const UPLOADS_FOLDER = "uploads";
+if (!fs.existsSync(UPLOADS_FOLDER)) fs.mkdirSync(UPLOADS_FOLDER);
+
+// Configure Multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, UPLOADS_FOLDER),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9) + ext;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype !== "application/pdf") {
+      return cb(new Error("Only PDF files are allowed"));
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+});
+
+// GET all MTPs
 router.get("/", async (req, res) => {
   try {
     const data = await MTP.find();
@@ -12,13 +41,77 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+// CREATE new MTP
+router.post("/", upload.single("file"), async (req, res) => {
   try {
-    const newItem = new MTP(req.body);
+    const { year, subject, attempt } = req.body;
+
+    if (!subject || !year || !attempt || !req.file) {
+      return res.status(400).json({ message: "All fields including PDF are required" });
+    }
+
+    const newItem = new MTP({
+      title: `${subject} ${year} ${attempt}`,
+      year,
+      subject,
+      fileUrl: `/uploads/${req.file.filename}`,
+      fileName: req.file.originalname, // <-- store original file name
+    });
+
     await newItem.save();
-    res.json(newItem);
+    res.status(201).json(newItem);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+// UPDATE MTP
+router.put("/:id", upload.single("file"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const mtp = await MTP.findById(id);
+    if (!mtp) return res.status(404).json({ message: "MTP not found" });
+
+    const { year, subject, attempt } = req.body;
+
+    if (year) mtp.year = year;
+    if (subject) mtp.subject = subject;
+    if (attempt) mtp.title = `${subject || mtp.subject} ${year || mtp.year} ${attempt}`;
+
+    if (req.file) {
+      // Delete old file
+      if (mtp.fileUrl) {
+        const oldFilePath = path.join(process.cwd(), mtp.fileUrl);
+        if (fs.existsSync(oldFilePath)) fs.unlinkSync(oldFilePath);
+      }
+      mtp.fileUrl = `/uploads/${req.file.filename}`;
+      mtp.fileName = req.file.originalname; // <-- store new original name
+    }
+
+    await mtp.save();
+    res.json(mtp);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// DELETE MTP (also delete PDF)
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const mtp = await MTP.findById(id);
+    if (!mtp) return res.status(404).json({ message: "MTP not found" });
+
+    // Delete PDF file
+    if (mtp.fileUrl) {
+      const filePath = path.join(process.cwd(), mtp.fileUrl);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    await mtp.deleteOne();
+    res.json({ message: "MTP deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

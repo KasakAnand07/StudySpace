@@ -3,8 +3,10 @@ import mongoose from "mongoose";
 const mtpSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    subject: { type: String },
-    fileUrl: { type: String },
+    year: { type: String, required: true },
+    subject: { type: String, required: true },
+    fileUrl: { type: String },   // PDF path
+    fileName: { type: String },  // Original file name
   },
   { timestamps: true }
 );
