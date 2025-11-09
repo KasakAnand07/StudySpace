@@ -215,7 +215,12 @@ export default function PYQ() {
                           <Button
                             variant="outline-primary"
                             size="sm"
-                            onClick={() => window.open(pyq.fileURL, "_blank")}
+                            onClick={() =>
+                              window.open(
+                                `${process.env.REACT_APP_API_URL}${pyq.fileUrl}`,
+                                "_blank"
+                              )
+                            }
                           >
                             <FileText size={14} className="me-1" /> View PDF
                           </Button>

@@ -1,10 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import {
-  getPYQs,
-  addPYQ,
-  deletePYQ,
-  updatePYQ,
-} from "../api/pyqService";
+import { getPYQs, addPYQ, deletePYQ, updatePYQ } from "../api/pyqService";
 
 const PYQContext = createContext();
 
@@ -35,6 +30,7 @@ export const PYQProvider = ({ children }) => {
   // Add new PYQ
   const createPYQ = async (formData) => {
     try {
+      console.log("Submitting PYQ form data:", formData); // <-- log it
       const newItem = await addPYQ(formData);
       setPyqs((prev) => [...prev, newItem]);
     } catch (err) {
@@ -57,9 +53,7 @@ export const PYQProvider = ({ children }) => {
   const editPYQ = async (id, updatedData) => {
     try {
       const updated = await updatePYQ(id, updatedData);
-      setPyqs((prev) =>
-        prev.map((p) => (p._id === id ? updated : p))
-      );
+      setPyqs((prev) => prev.map((p) => (p._id === id ? updated : p)));
     } catch (err) {
       console.error("Error updating PYQ:", err);
     }
