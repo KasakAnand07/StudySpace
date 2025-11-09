@@ -128,12 +128,12 @@ export default function RTP() {
 
   return (
     <LayoutWrapper
-      title="🎓 RTP - Previous Year Questions"
-      subtitle="Manage and review previous year question papers"
+      title="🎓 RTP - Revision Test Papers"
+      subtitle="Manage and review revision test papers"
     >
       <div className="content-page rtp-page container py-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="fw-bold text-black">Previous Year Questions (RTP)</h2>
+          <h2 className="fw-bold text-black">Revision Test Papers (RTP)</h2>
           <Button variant="primary" onClick={() => setShowModal(true)}>
             ➕ Add RTP
           </Button>

@@ -128,12 +128,12 @@ export default function MTP() {
 
   return (
     <LayoutWrapper
-      title="🎓 MTP - Previous Year Questions"
-      subtitle="Manage and review previous year question papers"
+      title="🎓 MTP - Mock Test Papers"
+      subtitle="Manage and review mock test papers"
     >
       <div className="content-page mtp-page container py-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="fw-bold text-black">Previous Year Questions (MTP)</h2>
+          <h2 className="fw-bold text-black">Mock Test Papers (MTP)</h2>
           <Button variant="primary" onClick={() => setShowModal(true)}>
             ➕ Add MTP
           </Button>
